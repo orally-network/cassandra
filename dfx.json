@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "cassandra_backend": {
+      "candid": "src/cassandra_backend/cassandra_backend.did",
+      "package": "cassandra_backend",
+      "type": "rust"
+    },
+    "cassandra_frontend": {
+      "dependencies": [
+        "cassandra_backend"
+      ],
+      "source": [
+        "src/cassandra_frontend/assets"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

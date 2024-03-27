@@ -1,0 +1,163 @@
+type AuthError = variant {
+  FailedToSign : text;
+  FailedToGetUserInfo : text;
+  UtilsError : UtilsError;
+  InvalidJwt : text;
+  FailedToExchangeToken;
+  HttpError : text;
+};
+type AuthResponse = record {
+  auth_method : text;
+  signature : text;
+  name : text;
+  user_id : nat;
+  email : text;
+  company : text;
+  avatar : text;
+};
+type CanisterLogFeature = variant {
+  filterMessageByContains;
+  filterMessageByRegex;
+};
+type CanisterLogMessages = record {
+  data : vec LogMessageData;
+  lastAnalyzedMessageTimeNanos : opt nat64;
+};
+type CanisterLogMessagesInfo = record {
+  features : vec opt CanisterLogFeature;
+  lastTimeNanos : opt nat64;
+  count : nat32;
+  firstTimeNanos : opt nat64;
+};
+type CanisterLogRequest = variant {
+  getMessagesInfo;
+  getMessages : GetLogMessagesParameters;
+  getLatestMessages : GetLatestLogMessagesParameters;
+};
+type CanisterLogResponse = variant {
+  messagesInfo : CanisterLogMessagesInfo;
+  messages : CanisterLogMessages;
+};
+type CanisterMetrics = record { data : CanisterMetricsData };
+type CanisterMetricsData = variant {
+  hourly : vec HourlyMetricsData;
+  daily : vec DailyMetricsData;
+};
+type CassandraError = variant {
+  AuthError : AuthError;
+  UtilsError : UtilsError;
+};
+type CollectMetricsRequestType = variant { force; normal };
+type DailyMetricsData = record {
+  updateCalls : nat64;
+  canisterHeapMemorySize : NumericEntity;
+  canisterCycles : NumericEntity;
+  canisterMemorySize : NumericEntity;
+  timeMillis : int;
+};
+type GetInformationRequest = record {
+  status : opt StatusRequest;
+  metrics : opt MetricsRequest;
+  logs : opt CanisterLogRequest;
+  version : bool;
+};
+type GetInformationResponse = record {
+  status : opt StatusResponse;
+  metrics : opt MetricsResponse;
+  logs : opt CanisterLogResponse;
+  version : opt nat;
+};
+type GetLatestLogMessagesParameters = record {
+  upToTimeNanos : opt nat64;
+  count : nat32;
+  filter : opt GetLogMessagesFilter;
+};
+type GetLogMessagesFilter = record {
+  analyzeCount : nat32;
+  messageRegex : opt text;
+  messageContains : opt text;
+};
+type GetLogMessagesParameters = record {
+  count : nat32;
+  filter : opt GetLogMessagesFilter;
+  fromTimeNanos : opt nat64;
+};
+type GetMetricsParameters = record {
+  dateToMillis : nat;
+  granularity : MetricsGranularity;
+  dateFromMillis : nat;
+};
+type HourlyMetricsData = record {
+  updateCalls : vec nat64;
+  canisterHeapMemorySize : vec nat64;
+  canisterCycles : vec nat64;
+  canisterMemorySize : vec nat64;
+  timeMillis : int;
+};
+type HttpHeader = record { value : text; name : text };
+type HttpResponse = record {
+  status : nat;
+  body : vec nat8;
+  headers : vec HttpHeader;
+};
+type LogMessageData = record { timeNanos : nat64; message : text };
+type Metadata = record {
+  github_oauth_client_id : text;
+  google_oauth_client_id : text;
+  google_oauth_client_secret : text;
+  key_name : text;
+  github_oauth_client_secret : text;
+  google_oauth_redirect_url : text;
+};
+type MetricsGranularity = variant { hourly; daily };
+type MetricsRequest = record { parameters : GetMetricsParameters };
+type MetricsResponse = record { metrics : opt CanisterMetrics };
+type NumericEntity = record {
+  avg : nat64;
+  max : nat64;
+  min : nat64;
+  first : nat64;
+  last : nat64;
+};
+type Result = variant { Ok : AuthResponse; Err : CassandraError };
+type Result_1 = variant { Ok; Err : CassandraError };
+type StatusRequest = record {
+  memory_size : bool;
+  cycles : bool;
+  heap_memory_size : bool;
+};
+type StatusResponse = record {
+  memory_size : opt nat64;
+  cycles : opt nat64;
+  heap_memory_size : opt nat64;
+};
+type TransformArgs = record { context : vec nat8; response : HttpResponse };
+type UpdateInformationRequest = record {
+  metrics : opt CollectMetricsRequestType;
+};
+type UpdateMetadata = record {
+  github_oauth_client_id : opt text;
+  google_oauth_client_id : opt text;
+  google_oauth_client_secret : opt text;
+  key_name : opt text;
+  github_oauth_client_secret : opt text;
+  google_oauth_redirect_url : opt text;
+};
+type UtilsError = variant {
+  FromHexError : text;
+  NotAController;
+  InvalidSignatureFormat;
+  FailedtoGetCassandraEVMAddress : text;
+  InvalidAddressFormat : text;
+};
+service : (text, text, text, text, text, text) -> {
+  getCanistergeekInformation : (GetInformationRequest) -> (
+      GetInformationResponse,
+    ) query;
+  get_metadata : () -> (Metadata) query;
+  github_auth : (text) -> (Result);
+  google_auth : (text) -> (Result);
+  transform : (TransformArgs) -> (HttpResponse) query;
+  updateCanistergeekInformation : (UpdateInformationRequest) -> ();
+  update_metadata : (UpdateMetadata) -> (Result_1);
+}

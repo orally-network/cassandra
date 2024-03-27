@@ -1,4 +1,2 @@
 [workspace]
-members = [
-    "src/cassandra_backend",
-]
+members = ["src/cassandra"]

@@ -1,18 +1,9 @@
 {
   "canisters": {
-    "cassandra_backend": {
-      "candid": "src/cassandra_backend/cassandra_backend.did",
-      "package": "cassandra_backend",
+    "cassandra": {
+      "candid": "src/cassandra/cassandra.did",
+      "package": "cassandra",
       "type": "rust"
-    },
-    "cassandra_frontend": {
-      "dependencies": [
-        "cassandra_backend"
-      ],
-      "source": [
-        "src/cassandra_frontend/assets"
-      ],
-      "type": "assets"
     }
   },
   "defaults": {

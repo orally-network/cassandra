@@ -7,6 +7,8 @@ use ic_cdk::{
 };
 use serde::Deserialize;
 
+use crate::get_metadata;
+
 #[query]
 pub fn transform(response: TransformArgs) -> HttpResponse {
     HttpResponse {
@@ -14,6 +16,14 @@ pub fn transform(response: TransformArgs) -> HttpResponse {
         body: response.response.body,
         headers: Vec::new(),
     }
+}
+
+pub fn wrap_url(url: &str) -> String {
+    format!(
+        "{}{}",
+        get_metadata!(orally_wrapper),
+        urlencoding::encode(url)
+    )
 }
 
 pub fn transform_ctx() -> TransformContext {

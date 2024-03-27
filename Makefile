@@ -30,7 +30,7 @@ endif
 
 	dfx canister create cassandra && dfx build cassandra && gzip -f -1 ./.dfx/local/canisters/cassandra/cassandra.wasm
 	dfx canister install --wasm ./.dfx/local/canisters/cassandra/cassandra.wasm.gz --argument \
-		"(\"dfx_test_key\", \"${GOOGLE_OAUTH_CLIENT_ID}\", \"${GOOGLE_OAUTH_CLIENT_SECRET}\", \"${GOOGLE_OAUTH_REDIRECT_URL}\", \
+		"(\"dfx_test_key\", \"https://rpc.orally.network/?rpc=\", \"${GOOGLE_OAUTH_CLIENT_ID}\", \"${GOOGLE_OAUTH_CLIENT_SECRET}\", \"${GOOGLE_OAUTH_REDIRECT_URL}\", \
 			\"${GITHUB_OAUTH_CLIENT_ID}\", \"${GITHUB_OAUTH_CLIENT_SECRET}\")" cassandra
 
 
@@ -75,7 +75,7 @@ endif
 	dfx canister create cassandra
 	dfx build cassandra && gzip -f -1 ./.dfx/local/canisters/cassandra/cassandra.wasm
 	dfx canister install --wasm ./.dfx/local/canisters/cassandra/cassandra.wasm.gz --argument \
-		"(\"key_1\", \"${GOOGLE_OAUTH_CLIENT_ID}\", \"${GOOGLE_OAUTH_CLIENT_SECRET}\", \"${GOOGLE_OAUTH_REDIRECT_URL}\", \
+		"(\"key_1\", \"https://rpc.orally.network/?rpc=\", \"${GOOGLE_OAUTH_CLIENT_ID}\", \"${GOOGLE_OAUTH_CLIENT_SECRET}\", \"${GOOGLE_OAUTH_REDIRECT_URL}\", \
 			\"${GITHUB_OAUTH_CLIENT_ID}\", \"${GITHUB_OAUTH_CLIENT_SECRET}\")" cassandra --ic 
 
 

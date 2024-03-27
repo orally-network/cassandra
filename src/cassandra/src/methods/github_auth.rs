@@ -1,8 +1,8 @@
 use crate::{
-    get_metadata,
+    get_metadata, log,
     methods::HTTP_CYCLES,
     types::auth_response::{AuthMethod, AuthResponse},
-    utils::{canister, errors::AuthError},
+    utils::{canister, errors::AuthError, http::wrap_url},
 };
 use candid::candid_method;
 use ic_cdk::{
@@ -37,6 +37,7 @@ async fn github_auth(authorization_code: String) -> crate::Result<AuthResponse> 
     canister::validate_caller()?;
 
     let token_response = exchange_token(authorization_code).await?;
+    log!("token_response: {:#?}", token_response);
     let user_info = get_user_info(token_response.access_token).await?;
 
     let user_id = user_info
@@ -93,7 +94,14 @@ async fn exchange_token(authorization_code: String) -> Result<TokenResponse, Aut
         urlencoding::encode(&client_secret)
     );
 
+    let root_url = wrap_url(&format!(
+        "https://github.com/login/oauth/access_token?{}",
+        params
+    ));
+
     let root_url = format!("https://github.com/login/oauth/access_token?{}", params);
+
+    log!("root_url: {}", root_url);
 
     let request = CanisterHttpRequestArgument {
         method: HttpMethod::POST,
@@ -113,8 +121,11 @@ async fn exchange_token(authorization_code: String) -> Result<TokenResponse, Aut
         transform: Some(transform_ctx()),
     };
 
-    let (response,) = retry_until_success!(http_request(request.clone(), HTTP_CYCLES))
-        .map_err(|(_, err)| AuthError::HttpError(err))?;
+    let response = retry_until_success!(http_request(request.clone(), HTTP_CYCLES));
+
+    log!("response: {:#?}", response);
+
+    let (response,) = response.map_err(|(_, err)| AuthError::HttpError(err))?;
 
     let response_str = String::from_utf8(response.body.clone()).expect("should be able to parse");
 
@@ -125,11 +136,13 @@ async fn exchange_token(authorization_code: String) -> Result<TokenResponse, Aut
 }
 
 async fn get_user_info(access_token: String) -> Result<Value, AuthError> {
-    let root_url = "https://api.github.com/user".to_string();
+    let root_url = wrap_url(&"https://api.github.com/user");
+
+    log!("root_url for user info: {}", root_url);
 
     let request = CanisterHttpRequestArgument {
         method: HttpMethod::GET,
-        url: root_url.to_string(),
+        url: root_url,
         body: None,
         headers: vec![
             HttpHeader {

@@ -10,6 +10,7 @@ mod utils;
 #[ic_cdk::init]
 fn init(
     key_name: String,
+    orally_wrapper: String,
     google_oauth_client_id: String,
     google_oauth_client_secret: String,
     google_oauth_redirect_url: String,
@@ -24,6 +25,7 @@ fn init(
             .metadata
             .set(Cbor(Metadata {
                 key_name,
+                orally_wrapper,
                 google_oauth_client_id,
                 google_oauth_client_secret,
                 google_oauth_redirect_url,

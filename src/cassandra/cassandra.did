@@ -106,6 +106,7 @@ type Metadata = record {
   google_oauth_client_id : text;
   google_oauth_client_secret : text;
   key_name : text;
+  orally_wrapper : text;
   github_oauth_client_secret : text;
   google_oauth_redirect_url : text;
 };
@@ -140,6 +141,7 @@ type UpdateMetadata = record {
   google_oauth_client_id : opt text;
   google_oauth_client_secret : opt text;
   key_name : opt text;
+  orally_wrapper : opt text;
   github_oauth_client_secret : opt text;
   google_oauth_redirect_url : opt text;
 };
@@ -150,7 +152,7 @@ type UtilsError = variant {
   FailedtoGetCassandraEVMAddress : text;
   InvalidAddressFormat : text;
 };
-service : (text, text, text, text, text, text) -> {
+service : (text, text, text, text, text, text, text) -> {
   getCanistergeekInformation : (GetInformationRequest) -> (
       GetInformationResponse,
     ) query;

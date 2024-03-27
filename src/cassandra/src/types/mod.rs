@@ -11,6 +11,7 @@ pub mod auth_response;
 #[derive(Serialize, Deserialize, Debug, Default, CandidType, Clone)]
 pub struct Metadata {
     pub key_name: String,
+    pub orally_wrapper: String,
 
     pub google_oauth_client_id: String,
     pub google_oauth_client_secret: String,
@@ -23,6 +24,7 @@ pub struct Metadata {
 #[derive(Serialize, Deserialize, CandidType, Clone)]
 pub struct UpdateMetadata {
     pub key_name: Option<String>,
+    pub orally_wrapper: Option<String>,
 
     pub google_oauth_client_id: Option<String>,
     pub google_oauth_client_secret: Option<String>,
@@ -36,6 +38,9 @@ impl Metadata {
     pub fn update(&mut self, update: UpdateMetadata) {
         if let Some(key_name) = update.key_name {
             self.key_name = key_name;
+        }
+        if let Some(orally_wrapper) = update.orally_wrapper {
+            self.orally_wrapper = orally_wrapper;
         }
 
         if let Some(google_oauth_client_id) = update.google_oauth_client_id {

@@ -2,7 +2,7 @@ use crate::{
     get_metadata,
     methods::HTTP_CYCLES,
     types::auth_response::{AuthMethod, AuthResponse},
-    utils::{canister, errors::AuthError},
+    utils::{canister, errors::AuthError, http::wrap_url},
 };
 use candid::candid_method;
 use ic_cdk::{
@@ -96,7 +96,7 @@ async fn exchange_token(authorization_code: String) -> Result<TokenResponse, Aut
         urlencoding::encode(&authorization_code),
         urlencoding::encode(&client_secret)
     );
-    let root_url = format!("https://oauth2.googleapis.com/token?{}", params);
+    let root_url = wrap_url(&format!("https://oauth2.googleapis.com/token?{}", params));
 
     let request = CanisterHttpRequestArgument {
         method: HttpMethod::POST,
